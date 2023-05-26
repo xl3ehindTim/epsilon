@@ -4,16 +4,16 @@ using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Epsilon.Abstractions.Component;
 
-[CompetenceComponentName("persona")]
-public record PersonaPage(string PersonaHtml) : ICompetenceWordComponent
+[CompetenceComponentName("front_page")]
+public record Page(string Html) : ICompetenceWordComponent
 {
     public void AddToWordDocument(MainDocumentPart mainDocumentPart)
     {
-        var personaHtmlBuffer = Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes($"<html>{PersonaHtml}</html>")).ToArray();
-        using var personaHtmlStream = new MemoryStream(personaHtmlBuffer);
+        var htmlBuffer = Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes($"<html>{Html}</html>")).ToArray();
+        using var htmlStream = new MemoryStream(htmlBuffer);
 
         var formatImportPart = mainDocumentPart.AddAlternativeFormatImportPart(AlternativeFormatImportPartType.Html);
-        formatImportPart.FeedData(personaHtmlStream);
+        formatImportPart.FeedData(htmlStream);
 
         mainDocumentPart.Document.AppendChild(new Body(
             new AltChunk

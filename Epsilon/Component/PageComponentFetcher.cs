@@ -6,13 +6,13 @@ using Microsoft.Extensions.Options;
 
 namespace Epsilon.Component;
 
-public class PersonaPageComponentFetcher : CompetenceComponentFetcher<PersonaPage>
+public class PageComponentFetcher : CompetenceComponentFetcher<Page>
 {
     private readonly IPageHttpService _pageHttpService;
     private readonly IFileHttpService _fileHttpService;
     private readonly CanvasSettings _canvasSettings;
 
-    public PersonaPageComponentFetcher(
+    public PageComponentFetcher(
         IPageHttpService pageHttpService,
         IFileHttpService fileHttpService,
         IOptions<CanvasSettings> canvasSettings
@@ -23,19 +23,19 @@ public class PersonaPageComponentFetcher : CompetenceComponentFetcher<PersonaPag
         _canvasSettings = canvasSettings.Value;
     }
 
-    public override async Task<PersonaPage> Fetch(string componentName, DateTime startDate, DateTime endDate)
+    public override async Task<Page> Fetch(string componentName, DateTime startDate, DateTime endDate)
     {
         var courseId = _canvasSettings.CourseId;
-        var personaHtml = await _pageHttpService.GetPageByName(courseId, "front_page");
+        var htmlString = await _pageHttpService.GetPageByName(courseId, componentName);
 
-        var updatedPersonaHtml = await GetPersonaHtmlDocument(personaHtml);
+        var updatedPersonaHtml = await GetHtmlDocument(htmlString);
 
-        var personaPage = new PersonaPage(updatedPersonaHtml.Text);
+        var page = new Page(updatedPersonaHtml.Text);
 
-        return personaPage;
+        return page;
     }
 
-    private async Task<HtmlDocument> GetPersonaHtmlDocument(string htmlString)
+    private async Task<HtmlDocument> GetHtmlDocument(string htmlString)
     {
         var htmlDoc = new HtmlDocument();
         htmlDoc.LoadHtml(htmlString);
