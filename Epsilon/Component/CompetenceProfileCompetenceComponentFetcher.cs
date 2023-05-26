@@ -54,7 +54,7 @@ public class CompetenceProfileCompetenceComponentFetcher : CompetenceComponentFe
         _configuration = configuration;
     }
 
-    public override async Task<CompetenceProfile> Fetch(DateTime startDate, DateTime endDate)
+    public override async Task<CompetenceProfile> Fetch(string componentName, DateTime startDate, DateTime endDate)
     {
         var studentId = _configuration["Canvas:StudentId"];
         var outcomesQuery = GetAllUserCoursesSubmissionOutcomes.Replace("$studentIds", $"{studentId}", StringComparison.InvariantCulture);
@@ -91,7 +91,7 @@ public class CompetenceProfileCompetenceComponentFetcher : CompetenceComponentFe
                         var rubricAssessments = submission.RubricAssessments.Nodes;
 
                         foreach (var assessmentRating in rubricAssessments.SelectMany(static rubricAssessment => rubricAssessment.AssessmentRatings.Where(static ar =>
-                                     ar is { Points: not null, Criterion.MasteryPoints: not null, Criterion.Outcome: not null, } && ar.Points >= ar.Criterion.MasteryPoints)))
+                                     ar is {Points: not null, Criterion.MasteryPoints: not null, Criterion.Outcome: not null,} && ar.Points >= ar.Criterion.MasteryPoints)))
                         {
                             if (FhictConstants.ProfessionalTasks.TryGetValue(assessmentRating.Criterion.Outcome.Id, out var professionalTask))
                             {
@@ -123,7 +123,7 @@ public class CompetenceProfileCompetenceComponentFetcher : CompetenceComponentFe
         }
 
         var filteredTerms = enrollmentTerms
-            .Where(static term => term is { StartAt: not null, EndAt: not null, })
+            .Where(static term => term is {StartAt: not null, EndAt: not null,})
             .Where(term => taskResults.Any(taskOutcome =>
                                taskOutcome.AssessedAt >= term.StartAt && taskOutcome.AssessedAt <= term.EndAt)
                            || professionalResults.Any(skillOutcome =>
