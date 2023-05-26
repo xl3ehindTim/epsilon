@@ -2,23 +2,23 @@ import {
     IHboIDomain,
     ProfessionalSkillResult,
     ProfessionalTaskResult,
-} from "/@/logic/Api"
+} from "/@/logic/Api";
 
 export interface DecayingAveragePerActivity {
-    outcome: number
-    activity: number
-    decayingAverage: number
+    outcome: number;
+    activity: number;
+    decayingAverage: number;
 }
 
 export interface DecayingAveragePerLayer {
-    architectureLayer: number
-    layerActivities: DecayingAveragePerActivity[]
+    architectureLayer: number;
+    layerActivities: DecayingAveragePerActivity[];
 }
 
 export interface DecayingAveragePerSkill {
-    skill: number
-    decayingAverage: number
-    masteryLevel: number
+    skill: number;
+    decayingAverage: number;
+    masteryLevel: number;
 }
 
 export class DecayingAverageLogic {
@@ -41,25 +41,25 @@ export class DecayingAverageLogic {
                 masteryLevel: j
                     .sort((a) => a.masteryLevel as never as number)
                     .at(0)?.masteryLevel,
-            } as DecayingAveragePerSkill
-        })
+            } as DecayingAveragePerSkill;
+        });
 
         return domain.professionalSkills?.map((s) => {
-            let score = 0.0
+            let score = 0.0;
             const filteredResults = listOfResults.filter(
                 (r) => r.skill === s.id
-            )
+            );
             filteredResults.map((result) => {
-                score += result.decayingAverage
-            })
+                score += result.decayingAverage;
+            });
             return {
                 decayingAverage: score / filteredResults.length,
                 skill: s.id,
                 masteryLevel: filteredResults
                     .sort((a) => a.masteryLevel as never as number)
                     .at(0)?.masteryLevel,
-            } as DecayingAveragePerSkill
-        }) as DecayingAveragePerSkill[]
+            } as DecayingAveragePerSkill;
+        }) as DecayingAveragePerSkill[];
     }
 
     /**
@@ -75,14 +75,14 @@ export class DecayingAverageLogic {
         const canvasDecaying = this.getDecayingAverageForAllOutcomes(
             taskResults,
             domain
-        )
+        );
         return domain.architectureLayers?.map((layer) => {
             return {
                 architectureLayer: layer.id,
                 layerActivities: domain.activities?.map((activity) => {
-                    let totalScoreActivity = 0
-                    let totalScoreArchitectureActivity = 0
-                    let amountOfActivities = 0
+                    let totalScoreActivity = 0;
+                    let totalScoreArchitectureActivity = 0;
+                    let amountOfActivities = 0;
 
                     //Calculate the total score from activity
                     canvasDecaying.map((l) =>
@@ -94,7 +94,7 @@ export class DecayingAverageLogic {
                                         la.decayingAverage &&
                                         amountOfActivities++)
                             )
-                    )
+                    );
 
                     //Calculate the total score from activity inside this architecture layer
                     canvasDecaying
@@ -107,7 +107,7 @@ export class DecayingAverageLogic {
                                         (totalScoreArchitectureActivity +=
                                             la.decayingAverage)
                                 )
-                        )
+                        );
 
                     return {
                         activity: activity.id,
@@ -115,10 +115,10 @@ export class DecayingAverageLogic {
                             ((totalScoreActivity / amountOfActivities) *
                                 totalScoreArchitectureActivity) /
                             totalScoreActivity,
-                    } as DecayingAveragePerActivity
+                    } as DecayingAveragePerActivity;
                 }),
-            }
-        }) as DecayingAveragePerLayer[]
+            };
+        }) as DecayingAveragePerLayer[];
     }
 
     /**
@@ -150,10 +150,10 @@ export class DecayingAverageLogic {
                         activity: j.at(0)?.activity,
                         decayingAverage:
                             this.getDecayingAverageFromOneOutcomeType(j),
-                    }
+                    };
                 }) as unknown as DecayingAveragePerActivity[],
-            }
-        }) as DecayingAveragePerLayer[]
+            };
+        }) as DecayingAveragePerLayer[];
     }
 
     /**
@@ -166,23 +166,21 @@ export class DecayingAverageLogic {
     private static getDecayingAverageFromOneOutcomeType(
         results: ProfessionalTaskResult[] | ProfessionalSkillResult[]
     ): number {
-        let totalGradeScore = 0.0
-
-        const recentResult = results.reverse().pop()
-        if (recentResult && recentResult.grade) {
-            if (results.length > 0) {
-                results.forEach(
-                    (r) => (totalGradeScore += r.grade ? r.grade : 0)
-                )
+        let totalGradeScore = 0.0;
+        if (results.length > 1) {
+            results.forEach((r, index) => {
                 totalGradeScore =
-                    (totalGradeScore / results.length) * 0.35 +
-                    recentResult.grade * 0.65
-            } else {
-                totalGradeScore = recentResult.grade
-            }
+                    (totalGradeScore / (index + 1)) * 0.65 +
+                    (r.grade ? r.grade : 0);
+            });
+        } else {
+            const r = results.pop();
+            totalGradeScore = r?.grade ? r.grade : 0;
         }
 
-        return totalGradeScore
+        console.log(totalGradeScore);
+
+        return totalGradeScore;
     }
 
     private static groupBy<T>(
@@ -190,10 +188,10 @@ export class DecayingAverageLogic {
         fn: (item: T) => number | string
     ): Record<string, T[]> {
         return arr.reduce<Record<string, T[]>>((prev, curr) => {
-            const groupKey = fn(curr)
-            const group = prev[groupKey] || []
-            group.push(curr)
-            return { ...prev, [groupKey]: group }
-        }, {})
+            const groupKey = fn(curr);
+            const group = prev[groupKey] || [];
+            group.push(curr);
+            return { ...prev, [groupKey]: group };
+        }, {});
     }
 }
