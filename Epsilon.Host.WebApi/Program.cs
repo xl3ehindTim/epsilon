@@ -1,4 +1,5 @@
 using Epsilon.Abstractions.Component;
+using Epsilon.Abstractions.Model;
 using Epsilon.Abstractions.Service;
 using Epsilon.Canvas;
 using Epsilon.Component;
@@ -31,6 +32,13 @@ builder.Services.AddScoped<ICompetenceComponentService, CompetenceComponentServi
 builder.Services.AddComponentFetcher<CompetenceProfile, CompetenceProfileCompetenceComponentFetcher>();
 builder.Services.AddComponentFetcher<KpiMatrixCollection, KpiMatrixComponentFetcher>();
 builder.Services.AddComponentFetcher<Page, PageComponentFetcher>();
+
+builder.Services.AddSingleton<StudentSettings>(static (services) => new StudentSettings(new Dictionary<string, string>()
+{
+    {
+        "persona_page", "front_page"
+    },
+}));
 
 var app = builder.Build();
 

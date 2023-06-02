@@ -4,7 +4,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Epsilon.Abstractions.Component;
 
-[CompetenceComponentName("front_page")]
+[CompetenceComponentName("persona_page")]
 public record Page(string Html) : ICompetenceWordComponent
 {
     public void AddToWordDocument(MainDocumentPart mainDocumentPart)

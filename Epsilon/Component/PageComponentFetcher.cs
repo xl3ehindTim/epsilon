@@ -1,4 +1,5 @@
 ﻿using Epsilon.Abstractions.Component;
+using Epsilon.Abstractions.Model;
 using Epsilon.Canvas;
 using Epsilon.Canvas.Abstractions.Service;
 using HtmlAgilityPack;
@@ -11,22 +12,25 @@ public class PageComponentFetcher : CompetenceComponentFetcher<Page>
     private readonly IPageHttpService _pageHttpService;
     private readonly IFileHttpService _fileHttpService;
     private readonly CanvasSettings _canvasSettings;
+    private readonly StudentSettings _studentSettings;
 
     public PageComponentFetcher(
         IPageHttpService pageHttpService,
         IFileHttpService fileHttpService,
-        IOptions<CanvasSettings> canvasSettings
+        IOptions<CanvasSettings> canvasSettings,
+        StudentSettings studentSettings
     )
     {
         _pageHttpService = pageHttpService;
         _fileHttpService = fileHttpService;
         _canvasSettings = canvasSettings.Value;
+        _studentSettings = studentSettings;
     }
 
     public override async Task<Page> Fetch(string componentName, DateTime startDate, DateTime endDate)
     {
         var courseId = _canvasSettings.CourseId;
-        var htmlString = await _pageHttpService.GetPageByName(courseId, componentName);
+        var htmlString = await _pageHttpService.GetPageByName(courseId, _studentSettings.PageMapping[componentName]);
 
         var updatedPersonaHtml = await GetHtmlDocument(htmlString);
 
@@ -34,6 +38,7 @@ public class PageComponentFetcher : CompetenceComponentFetcher<Page>
 
         return page;
     }
+
 
     private async Task<HtmlDocument> GetHtmlDocument(string htmlString)
     {
@@ -62,5 +67,4 @@ public class PageComponentFetcher : CompetenceComponentFetcher<Page>
 
         return htmlDoc;
     }
-
 }
