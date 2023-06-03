@@ -8,7 +8,7 @@ import router from "../router"
 
 const windowRef = ref()
 
-function openWindow() {
+function openWindow(): void {
     windowRef.value = window.open(
         "https://localhost:7084/auth/challenge",
         "",
