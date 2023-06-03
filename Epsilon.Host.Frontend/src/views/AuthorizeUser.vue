@@ -2,7 +2,7 @@
     <button @click="openWindow">Click here to authorize</button>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref } from "vue"
 import router from "../router"
 

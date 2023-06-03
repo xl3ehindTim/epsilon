@@ -27,7 +27,7 @@ api.component
     .then(() => {
         Kpis.value = {}
         data.value.kpiMatrixAssignments.map((assignment) => {
-            assignment.outcomes.map(function(outcome) {
+            assignment.outcomes.map(function (outcome) {
                 Kpis.value[outcome.id as string] = outcome
             })
         })
@@ -35,35 +35,30 @@ api.component
 </script>
 
 <template>
-  <table v-if="!!data">
-    <tr>
-      <th />
-      <th
-        v-for="assignemnt of data.kpiMatrixAssignments"
-        :key="assignemnt"
-      >
-        {{ assignemnt.name }}
-      </th>
-    </tr>
-    <tr
-      v-for="KPI of Kpis"
-      :key="KPI"
-    >
-      <th>{{ KPI.title }}</th>
-      <td
-        v-for="assignemnt of data.kpiMatrixAssignments"
-        :key="assignemnt"
-        :style="{
-          'background-color':
-            '#' +
-            assignemnt.outcomes.find((o) => o.id === KPI.id)
-              ?.gradeStatus.color,
-        }"
-      >
-        {{ assignemnt.outcomes.find((o) => o.id === KPI.id)?.color }}
-      </td>
-    </tr>
-  </table>
+    <table v-if="!!data">
+        <tr>
+            <th />
+            <th
+                v-for="assignemnt of data.kpiMatrixAssignments"
+                :key="assignemnt">
+                {{ assignemnt.name }}
+            </th>
+        </tr>
+        <tr v-for="KPI of Kpis" :key="KPI">
+            <th>{{ KPI.title }}</th>
+            <td
+                v-for="assignemnt of data.kpiMatrixAssignments"
+                :key="assignemnt"
+                :style="{
+                    'background-color':
+                        '#' +
+                        assignemnt.outcomes.find((o) => o.id === KPI.id)
+                            ?.gradeStatus.color,
+                }">
+                {{ assignemnt.outcomes.find((o) => o.id === KPI.id)?.color }}
+            </td>
+        </tr>
+    </table>
 </template>
 
 <style scoped></style>

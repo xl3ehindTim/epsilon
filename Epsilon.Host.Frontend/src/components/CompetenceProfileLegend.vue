@@ -4,7 +4,7 @@
             v-for="level of props.domain.masteryLevels as MasteryLevel[]"
             :key="level.id"
             class="competence-profile-legend-row">
-            <td class="kpi-color" :style="{ backgroundColor: level.color }" />
+            <td :style="{ backgroundColor: level.color }" class="kpi-color" />
             <th class="kpi-text">Level {{ level.level }}</th>
         </tr>
     </table>
