@@ -27,10 +27,10 @@ public class PageComponentFetcher : CompetenceComponentFetcher<Page>
         _studentSettings = studentSettings;
     }
 
-    public override async Task<Page> Fetch(string componentName, DateTime startDate, DateTime endDate)
+    public override async Task<Page> Fetch(DateTime startDate, DateTime endDate)
     {
         var courseId = _canvasSettings.CourseId;
-        var htmlString = await _pageHttpService.GetPageByName(courseId, _studentSettings.PageMapping[componentName]);
+        var htmlString = await _pageHttpService.GetPageByName(courseId, _studentSettings.PageMapping[""]);
 
         var updatedPersonaHtml = await GetHtmlDocument(htmlString);
 
